@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    float playerHeight = 2f;
+
+    [SerializeField] Transform orientation;
+
     public float movementSpeed = 10f;
     public float movementMultiplier = 10f;
     float horizontalMovement;
@@ -16,10 +18,14 @@ public class PlayerMovement : MonoBehaviour
     public float airDrag = 1f;
 
     Vector3 moveDirection;
-
+    
+    [Header("Ground Detection")]
+    public bool isGrounded;
+    [SerializeField] Transform groundCheck;
+    private float checkRadius = 0.4f;
+    [SerializeField] LayerMask whatIsGround;
 
     [Header("Jumping")]
-    public bool isGrounded;
     public float jumpForce = 15f;
     [SerializeField] private float airMultiplier = 0.2f;
 
@@ -36,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight / 2 + 0.1f);
+        isGrounded = Physics.CheckSphere(groundCheck.position, checkRadius, whatIsGround);
 
         MyInput();
         HandleDrag();
@@ -57,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         verticalMovement = Input.GetAxisRaw("Vertical");
 
-        moveDirection = transform.forward * verticalMovement + transform.right * horizontalMovement;
+        moveDirection = orientation.forward * verticalMovement + orientation.right * horizontalMovement;
     }
 
     void MovePlayer()
