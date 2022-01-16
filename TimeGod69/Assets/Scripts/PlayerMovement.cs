@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -13,12 +12,14 @@ public class PlayerMovement : MonoBehaviour
     float horizontalMovement;
     float verticalMovement;
 
-   [Header("Drag")]
+
+
+    [Header("Drag")]
     public float groundDrag = 6f;
     public float airDrag = 1f;
 
     Vector3 moveDirection;
-    
+
     [Header("Ground Detection")]
     public bool isGrounded;
     [SerializeField] Transform groundCheck;
@@ -33,7 +34,6 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("KeyBinds")]
     public KeyCode jumpKey = KeyCode.Space;
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -47,10 +47,11 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         HandleDrag();
 
-        if(isGrounded && Input.GetKeyDown(jumpKey))
+        if (isGrounded && Input.GetKeyDown(jumpKey))
         {
             Jump();
         }
+
 
     }
     private void FixedUpdate()
@@ -70,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGrounded)
         {
-            rb.AddForce(moveDirection.normalized * movementSpeed * movementMultiplier, ForceMode.Acceleration); 
+            rb.AddForce(moveDirection.normalized * movementSpeed * movementMultiplier, ForceMode.Acceleration);
         }
         else
         {
@@ -83,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
-    void HandleDrag() 
+    void HandleDrag()
     {
         if (!isGrounded)
         {
@@ -94,4 +95,5 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = groundDrag;
         }
     }
+
 }
