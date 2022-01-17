@@ -8,8 +8,8 @@ public class BulletTime : MonoBehaviour
     public TimeManager timeManager;
     public KeyCode slowMoKey = KeyCode.Mouse1;
     public float t = 0.5f;
-    [SerializeField] Slider timeSlider;
 
+    [SerializeField] Slider timeSlider;
     public int maxTime = 15;
     public float reloadTime = 2f;
     public float reloadAfterInactivite = 3f;
@@ -18,12 +18,14 @@ public class BulletTime : MonoBehaviour
     [SerializeField] private bool isReloading = false;
     [SerializeField] private float currentTime;
     [SerializeField] private float inactiveTime = 0f;
+
     private void Start()
     {
         currentTime = maxTime;
         timeSlider.maxValue = maxTime;
         timeSlider.value = maxTime;
     }
+
     void Update()
     {
         if (isReloading)
@@ -54,6 +56,7 @@ public class BulletTime : MonoBehaviour
             StopBulletTimeEffect();
         }
     }
+
     void BulletTimeEffect()
     {
         inactiveTime = 0;
@@ -61,10 +64,12 @@ public class BulletTime : MonoBehaviour
         timeSlider.value = currentTime;
         timeManager.DoSlowMotion();
     }
+
     void StopBulletTimeEffect()
     {
         timeManager.StopSlowMotion();
     }
+
     IEnumerator ReloadTimer()
     {
         isReloading = true;
@@ -73,6 +78,7 @@ public class BulletTime : MonoBehaviour
         timeSlider.value = currentTime;
         isReloading = false;
     }
+
     void RefreshNonEmptyTimer()
     {
         isReloading = true;

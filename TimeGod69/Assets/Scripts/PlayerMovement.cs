@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-
     [SerializeField] Transform orientation;
     [SerializeField] private float playerHeight = 2f;
     public float movementSpeed = 7f;

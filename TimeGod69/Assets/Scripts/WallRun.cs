@@ -6,9 +6,20 @@ public class WallRun : MonoBehaviour
     [SerializeField] Transform orientation;
     [SerializeField] float wallDistance = 0.6f;
     [SerializeField] float minimumJumpHeight = 1.5f;
+
     [Header("Wall Running")]
     [SerializeField] private float wallRunGravity;
     [SerializeField] float wallJumpForce;
+
+    [Header("Camera Effects")]
+    [SerializeField] private Camera cam;
+    [SerializeField] private float fov;
+    [SerializeField] private float wallRunFov;
+    [SerializeField] private float wallRunFovTime;
+    [SerializeField] private float cameraTilt;
+    [SerializeField] private float cameraTiltTime;
+
+    public float tilt { get; private set; }
     Rigidbody rb;
     RaycastHit leftWallHit;
     RaycastHit rightWallHit;
@@ -28,7 +39,7 @@ public class WallRun : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
     }
-    void Update()
+    void FixedUpdate()
     {
         CheckWall();
         if (CanWallRun())
@@ -56,6 +67,18 @@ public class WallRun : MonoBehaviour
     {
         rb.useGravity = false;
         rb.AddForce(Vector3.down * wallRunGravity, ForceMode.Force);
+
+        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, wallRunFov, wallRunFovTime * Time.deltaTime);
+
+        if (wallLeft)
+        {
+            tilt = Mathf.Lerp(tilt, -cameraTilt, cameraTiltTime * Time.deltaTime);
+        }
+        else if (wallRight)
+        {
+            tilt = Mathf.Lerp(tilt, cameraTilt, cameraTiltTime * Time.deltaTime);
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (wallLeft)
@@ -73,8 +96,10 @@ public class WallRun : MonoBehaviour
         }
     }
 
-    void StopWallRun()
+    public void StopWallRun()
     {
         rb.useGravity = true;
+        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fov, wallRunFovTime * Time.deltaTime);
+        tilt = Mathf.Lerp(tilt, 0, cameraTiltTime * Time.deltaTime);
     }
 }

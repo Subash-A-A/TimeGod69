@@ -4038,6 +4038,7 @@ MonoBehaviour:
   sensY: 0.5
   cam: {fileID: 284551559}
   orientaion: {fileID: 876782607}
+  wallRun: {fileID: 1639340593}
 --- !u!114 &1639340592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4076,7 +4077,13 @@ MonoBehaviour:
   wallDistance: 0.6
   minimumJumpHeight: 1.5
   wallRunGravity: 2
-  wallJumpForce: 5
+  wallJumpForce: 4
+  cam: {fileID: 1497165136}
+  fov: 90
+  wallRunFov: 95
+  wallRunFovTime: 20
+  cameraTilt: 20
+  cameraTiltTime: 20
 --- !u!1 &1657324377
 GameObject:
   m_ObjectHideFlags: 0
