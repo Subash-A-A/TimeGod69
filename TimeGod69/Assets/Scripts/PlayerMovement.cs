@@ -7,13 +7,17 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] Transform orientation;
     [SerializeField] private float playerHeight = 2f;
-    public float movementSpeed = 10f;
+    public float movementSpeed = 7f;
     public float movementMultiplier = 10f;
     float horizontalMovement;
     float verticalMovement;
     Vector3 moveDirection;
     Vector3 slopeMoveDirection;
 
+    [Header("Walking")]
+    [SerializeField] float walkSpeed = 4f;
+    [SerializeField] float sprintSpeed = 7f;
+    [SerializeField] float acceleration = 10f; // acceleration is used to lerp b/w walk and sprint speed.
 
     [Header("Drag")]
     public float groundDrag = 6f;
@@ -34,27 +38,14 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("KeyBinds")]
     public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode walkKey = KeyCode.LeftShift;
     RaycastHit slopeHit;
-    private bool OnSlope()
-    {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f))
-        {
-            if (slopeHit.normal != Vector3.up)
-            {
-                // This means we are on slope
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return false;
-    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        movementSpeed = sprintSpeed;
     }
 
     private void Update()
@@ -62,7 +53,8 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = Physics.CheckSphere(groundCheck.position, checkRadius, whatIsGround);
 
         MyInput();
-        HandleDrag();
+        ControlDrag();
+        ControlSpeed();
 
         if (isGrounded && Input.GetKeyDown(jumpKey))
         {
@@ -84,6 +76,21 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = orientation.forward * verticalMovement + orientation.right * horizontalMovement;
     }
 
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f))
+        {
+            if (slopeHit.normal != Vector3.up)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
     void MovePlayer()
     {
         if (isGrounded && !OnSlope())
@@ -102,10 +109,15 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        if (isGrounded)
+        {
+            // We are resetting y velocity to zero when grounded.
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        }
     }
 
-    void HandleDrag()
+    void ControlDrag()
     {
         if (!isGrounded)
         {
@@ -114,6 +126,18 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             rb.drag = groundDrag;
+        }
+    }
+
+    void ControlSpeed()
+    {
+        if (Input.GetKey(walkKey) && isGrounded)
+        {
+            movementSpeed = Mathf.Lerp(movementSpeed, walkSpeed, acceleration * Time.deltaTime);
+        }
+        else
+        {
+            movementSpeed = Mathf.Lerp(movementSpeed, sprintSpeed, acceleration * Time.deltaTime);
         }
     }
 
