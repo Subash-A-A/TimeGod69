@@ -7,6 +7,7 @@ public class BulletTime : MonoBehaviour
     [Header("Bullet Time Settings")]
     public TimeManager timeManager;
     public KeyCode slowMoKey = KeyCode.Mouse1;
+    public float t = 0.5f;
     [SerializeField] Slider timeSlider;
 
     public int maxTime = 15;
@@ -50,7 +51,7 @@ public class BulletTime : MonoBehaviour
         }
         if (Input.GetKeyUp(slowMoKey) || currentTime <= 0)
         {
-            timeManager.StopSlowMotion();
+            StopBulletTimeEffect();
         }
     }
     void BulletTimeEffect()
@@ -59,6 +60,10 @@ public class BulletTime : MonoBehaviour
         currentTime -= Time.deltaTime * 50f;
         timeSlider.value = currentTime;
         timeManager.DoSlowMotion();
+    }
+    void StopBulletTimeEffect()
+    {
+        timeManager.StopSlowMotion();
     }
     IEnumerator ReloadTimer()
     {

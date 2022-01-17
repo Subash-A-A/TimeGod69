@@ -6,19 +6,19 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
 
     [SerializeField] Transform orientation;
-
+    [SerializeField] private float playerHeight = 2f;
     public float movementSpeed = 10f;
     public float movementMultiplier = 10f;
     float horizontalMovement;
     float verticalMovement;
-
+    Vector3 moveDirection;
+    Vector3 slopeMoveDirection;
 
 
     [Header("Drag")]
     public float groundDrag = 6f;
     public float airDrag = 1f;
 
-    Vector3 moveDirection;
 
     [Header("Ground Detection")]
     public bool isGrounded;
@@ -34,6 +34,23 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("KeyBinds")]
     public KeyCode jumpKey = KeyCode.Space;
+    RaycastHit slopeHit;
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f))
+        {
+            if (slopeHit.normal != Vector3.up)
+            {
+                // This means we are on slope
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -51,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Jump();
         }
-
+        slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
 
     }
     private void FixedUpdate()
@@ -69,11 +86,15 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
-        if (isGrounded)
+        if (isGrounded && !OnSlope())
         {
             rb.AddForce(moveDirection.normalized * movementSpeed * movementMultiplier, ForceMode.Acceleration);
         }
-        else
+        else if (isGrounded && OnSlope())
+        {
+            rb.AddForce(slopeMoveDirection.normalized * movementSpeed * movementMultiplier, ForceMode.Acceleration);
+        }
+        else if (!isGrounded)
         {
             rb.AddForce(moveDirection.normalized * movementSpeed * movementMultiplier * airMultiplier, ForceMode.Acceleration);
         }
