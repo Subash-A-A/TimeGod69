@@ -23,7 +23,6 @@ public class WallRun : MonoBehaviour
     Rigidbody rb;
     RaycastHit leftWallHit;
     RaycastHit rightWallHit;
-    Vector3 wallRunJumpDirection;
 
     bool wallLeft = false;
     bool wallRight = false;
@@ -40,7 +39,7 @@ public class WallRun : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
     }
-    void FixedUpdate()
+    void Update()
     {
         CheckWall();
         if (CanWallRun())
@@ -71,19 +70,6 @@ public class WallRun : MonoBehaviour
 
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, wallRunFov, wallRunFovTime * Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (wallLeft)
-            {
-                wallRunJumpDirection = transform.up + leftWallHit.normal;
-            }
-            if (wallRight)
-            {
-                wallRunJumpDirection = transform.up + rightWallHit.normal;
-            }
-            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-            rb.AddForce(wallRunJumpDirection * wallJumpForce * 100, ForceMode.Force);
-        }
         if (wallLeft)
         {
             tilt = Mathf.Lerp(tilt, -cameraTilt, cameraTiltTime * Time.deltaTime);
@@ -91,6 +77,22 @@ public class WallRun : MonoBehaviour
         else if (wallRight)
         {
             tilt = Mathf.Lerp(tilt, cameraTilt, cameraTiltTime * Time.deltaTime);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (wallLeft)
+            {
+                Vector3 wallRunJumpDirection = transform.up + leftWallHit.normal;
+                rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                rb.AddForce(wallRunJumpDirection * wallJumpForce * 100, ForceMode.Force);
+            }
+            else if (wallRight)
+            {
+                Vector3 wallRunJumpDirection = transform.up + rightWallHit.normal;
+                rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                rb.AddForce(wallRunJumpDirection * wallJumpForce * 100, ForceMode.Force);
+            }
         }
     }
 
