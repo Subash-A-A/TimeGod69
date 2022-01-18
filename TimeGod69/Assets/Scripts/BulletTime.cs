@@ -1,8 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+
 public class BulletTime : MonoBehaviour
 {
     [Header("Bullet Time Settings")]
@@ -11,8 +10,6 @@ public class BulletTime : MonoBehaviour
     public float t = 0.5f;
 
     [SerializeField] Slider timeSlider;
-    [SerializeField] Volume volume;
-    private ChromaticAberration chromaticAberration;
     public int maxTime = 15;
     public float reloadTime = 2f;
     public float reloadAfterInactivite = 3f;
@@ -27,10 +24,6 @@ public class BulletTime : MonoBehaviour
         currentTime = maxTime;
         timeSlider.maxValue = maxTime;
         timeSlider.value = maxTime;
-        if (volume.profile.TryGet<ChromaticAberration>(out chromaticAberration))
-        {
-            chromaticAberration.intensity.value = 0f;
-        }
     }
 
     void Update()
@@ -66,7 +59,6 @@ public class BulletTime : MonoBehaviour
 
     void BulletTimeEffect()
     {
-        chromaticAberration.intensity.value = Mathf.Lerp(chromaticAberration.intensity.value, 0.7f, 10f * Time.unscaledDeltaTime);
         inactiveTime = 0;
         currentTime -= Time.deltaTime * 50f;
         timeSlider.value = currentTime;
@@ -75,7 +67,6 @@ public class BulletTime : MonoBehaviour
 
     void StopBulletTimeEffect()
     {
-        chromaticAberration.intensity.value = 0f;
         timeManager.StopSlowMotion();
     }
 

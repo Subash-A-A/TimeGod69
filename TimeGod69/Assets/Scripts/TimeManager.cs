@@ -13,5 +13,6 @@ public class TimeManager : MonoBehaviour
     {
         Time.timeScale = 1;
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
+
     }
 }
