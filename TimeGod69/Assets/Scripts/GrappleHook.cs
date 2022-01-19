@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrappleHook : MonoBehaviour
@@ -8,8 +6,11 @@ public class GrappleHook : MonoBehaviour
     [SerializeField] LayerMask grappleLayer;
     [SerializeField] KeyCode grappleKey = KeyCode.Q;
     [SerializeField] Transform gunTip, cam, player;
-    [SerializeField] float maxDistance = 70f;
-    [SerializeField] float spring = 4.5f;
+    [SerializeField] float range = 70f;
+    [SerializeField] float spring = 3f;
+    [SerializeField] float minDistanceMultiplier = 0.2f;
+    [SerializeField] float maxDistanceMultiplier = 0.3f;
+    private float sconst;
     [SerializeField] float damper = 7f;
     [SerializeField] float massScale = 4.5f;
     private LineRenderer lineRenderer;
@@ -39,7 +40,7 @@ public class GrappleHook : MonoBehaviour
     void StartGrapple()
     {
         RaycastHit hitInfo;
-        if (Physics.Raycast(cam.position, cam.forward, out hitInfo, maxDistance))
+        if (Physics.Raycast(cam.position, cam.forward, out hitInfo, range))
         {
             grapplePoint = hitInfo.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
@@ -48,8 +49,8 @@ public class GrappleHook : MonoBehaviour
 
             float distFromPoint = Vector3.Distance(player.position, grapplePoint);
 
-            joint.maxDistance = distFromPoint * 0.8f;
-            joint.minDistance = distFromPoint * 0.25f;
+            joint.minDistance = distFromPoint * minDistanceMultiplier;
+            joint.maxDistance = distFromPoint * maxDistanceMultiplier;
 
             joint.spring = spring;
             joint.damper = damper;
