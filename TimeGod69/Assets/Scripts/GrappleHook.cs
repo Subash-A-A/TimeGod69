@@ -13,6 +13,11 @@ public class GrappleHook : MonoBehaviour
     private float sconst;
     [SerializeField] float damper = 7f;
     [SerializeField] float massScale = 4.5f;
+
+    [Header("Aim Assist")]
+    [SerializeField] float aimAssistRadius = 1f;
+    [SerializeField] GameObject debugAssist;
+    [SerializeField] bool drawAssist = true;
     private LineRenderer lineRenderer;
     private Vector3 grapplePoint;
     private SpringJoint joint;
@@ -20,10 +25,13 @@ public class GrappleHook : MonoBehaviour
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        debugAssist.SetActive(false);
     }
 
     private void Update()
     {
+        DrawAssistPoint();
+
         if (Input.GetKeyDown(grappleKey))
         {
             StartGrapple();
@@ -40,7 +48,7 @@ public class GrappleHook : MonoBehaviour
     void StartGrapple()
     {
         RaycastHit hitInfo;
-        if (Physics.Raycast(cam.position, cam.forward, out hitInfo, range))
+        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hitInfo, range))
         {
             grapplePoint = hitInfo.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
@@ -71,5 +79,20 @@ public class GrappleHook : MonoBehaviour
         if (!joint) return;
         lineRenderer.SetPosition(0, gunTip.position);
         lineRenderer.SetPosition(1, grapplePoint);
+    }
+
+    void DrawAssistPoint()
+    {
+        RaycastHit hit;
+        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hit, range) && drawAssist)
+        {
+            debugAssist.SetActive(true);
+            debugAssist.transform.forward = cam.transform.forward;
+            debugAssist.transform.position = hit.point;
+        }
+        else
+        {
+            debugAssist.SetActive(false);
+        }
     }
 }
