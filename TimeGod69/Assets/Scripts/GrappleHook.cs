@@ -48,7 +48,7 @@ public class GrappleHook : MonoBehaviour
     void StartGrapple()
     {
         RaycastHit hitInfo;
-        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hitInfo, range))
+        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hitInfo, range, grappleLayer))
         {
             grapplePoint = hitInfo.point;
             joint = player.gameObject.AddComponent<SpringJoint>();
@@ -84,7 +84,7 @@ public class GrappleHook : MonoBehaviour
     void DrawAssistPoint()
     {
         RaycastHit hit;
-        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hit, range) && drawAssist)
+        if (Physics.SphereCast(cam.position, aimAssistRadius, cam.forward, out hit, range, grappleLayer) && drawAssist)
         {
             debugAssist.SetActive(true);
             debugAssist.transform.forward = cam.transform.forward;
