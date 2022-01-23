@@ -3,15 +3,20 @@ using UnityEngine;
 public class GunShooting : MonoBehaviour
 {
     [Header("Bullet")]
-    public GameObject bullet;
+    [SerializeField] GameObject bullet;
 
     [Header("Forces")]
-    public float shootForce, upwardForce;
+    [SerializeField] float shootForce;
+    [SerializeField] float upwardForce;
 
     [Header("Gun Settings")]
-    public float timeBetweenShooting, spread, reloadTime, timeBetweenShots;
-    public int magSize, bulletsPerTap;
-    public bool fullAuto;
+    [SerializeField] float timeBetweenShooting;
+    [SerializeField] float spread;
+    [SerializeField] float reloadTime;
+    [SerializeField] float timeBetweenShots;
+    [SerializeField] int magSize;
+    [SerializeField] int bulletsPerTap;
+    [SerializeField] bool fullAuto;
 
     int bulletsLeft, bulletsShot;
     bool shooting, readyToShoot, reloading;
@@ -23,12 +28,15 @@ public class GunShooting : MonoBehaviour
     [SerializeField] KeyCode reloadKey = KeyCode.R;
 
     [Header("Debugging")]
-    public bool allowInvoke = true;
+    [SerializeField] bool allowInvoke = true;
+
+    private Animator anim;
 
     private void Awake()
     {
         bulletsLeft = magSize;
         readyToShoot = true;
+        anim = GetComponent<Animator>();
     }
     private void Update()
     {
@@ -92,6 +100,9 @@ public class GunShooting : MonoBehaviour
         //Calculate new Direction with Spread
         Vector3 directionWithSpread = directionWithoutSpread + new Vector3(spreadX, spreadY, 0);
 
+        // Play Fire Animation
+        anim.SetTrigger("Fire");
+
         //Instantiate bullet
         GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
         currentBullet.transform.forward = directionWithSpread.normalized;
@@ -101,6 +112,8 @@ public class GunShooting : MonoBehaviour
 
         bulletsLeft--;
         bulletsShot++;
+
+        Destroy(currentBullet, 5f);
 
         if (allowInvoke)
         {

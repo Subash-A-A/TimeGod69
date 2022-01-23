@@ -1,13 +1,10 @@
-using System.Collections;
 using UnityEngine;
 
-public class GunBehaviour : MonoBehaviour
+public class GunAnimations : MonoBehaviour
 {
-    [Header("Animations")]
     private Animator anim;
     [SerializeField] KeyCode aimKey = KeyCode.Mouse1;
-
-    private void Start()
+    private void Awake()
     {
         anim = GetComponent<Animator>();
     }
@@ -22,5 +19,4 @@ public class GunBehaviour : MonoBehaviour
             anim.SetBool("isAiming", false);
         }
     }
-
 }
